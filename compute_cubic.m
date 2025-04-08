@@ -1,4 +1,4 @@
-function [qd, d_qd, dd_qd] = compute_cubic(ti, tf, qi, qf)
+function [qd, d_qd, dd_qd] = compute_cubic(ti, tf, qi, qf, do_plot)
     % Inputs:
     % ti - Trajectory starting time (scalar)
     % tf - Trajecotry final time (scalar)
@@ -34,36 +34,38 @@ function [qd, d_qd, dd_qd] = compute_cubic(ti, tf, qi, qf)
     end
 
     %% Plots
-    figure('Units', 'inches', 'Position', [0, 0, 7, 5]);
-    subplot(3,1,1)
-    plot(qd,'Color','[0,0.0,0.0]',LineWidth=3);
-    title('Cubic Polynomial Trajectory','fontsize',20, 'interpreter','latex')
-    ylabel('$q_d$ $[rad]$','fontsize',20, 'interpreter','latex')
-    grid on
-    xlim([0 length(t)+50]);
-    ax = gca;
-    ax.XTick = 0:100:length(t)+50;
-    ax.XTickLabel = {'0', '1', '2', '3', '4', '5', '6', '7', '8'};
-    set(gca, 'TickLabelInterpreter', 'latex', 'FontSize', 20);
-    subplot(3,1,2)
-    plot(d_qd,'Color','[0,0,0]',LineWidth=3);
-    ylabel('$\dot{q}_d$ $[rad/s]$','fontsize',20, 'interpreter','latex')
-    grid on
-    xlim([0 length(t)+50]);
-    ax = gca;
-    ax.XTick = 0:100:length(t)+50;
-    ax.XTickLabel = {'0', '1', '2', '3', '4', '5', '6', '7', '8'};
-    set(gca, 'TickLabelInterpreter', 'latex', 'FontSize', 20);
-    set(gca, 'TickLabelInterpreter', 'latex');
-    subplot(3,1,3)
-    plot(dd_qd,'Color','[0,0,0]',LineWidth=3);
-    ylabel('$\ddot{q}_d$ $[rad/s^2]$','fontsize',20, 'interpreter','latex')
-    grid on
-    xlim([0 length(t)+50]);
-    ax = gca;
-    ax.XTick = 0:100:length(t)+50;
-    xlabel('$t$ $[s]$','fontsize',20,'interpreter','latex')
-    ax.XTickLabel = {'0', '1', '2', '3', '4', '5', '6', '7', '8'};
-    set(gca, 'TickLabelInterpreter', 'latex', 'FontSize', 20);
-    set(gca, 'TickLabelInterpreter', 'latex');
+    if( do_plot )
+        figure('Units', 'inches', 'Position', [0, 0, 7, 5]);
+        subplot(3,1,1)
+        plot(qd,'Color','[0,0.0,0.0]',LineWidth=3);
+        title('Cubic Polynomial Trajectory','fontsize',20, 'interpreter','latex')
+        ylabel('$q_d$ $[rad]$','fontsize',20, 'interpreter','latex')
+        grid on
+        xlim([0 length(t)+50]);
+        ax = gca;
+        ax.XTick = 0:100:length(t)+50;
+        ax.XTickLabel = {'0', '1', '2', '3', '4', '5', '6', '7', '8'};
+        set(gca, 'TickLabelInterpreter', 'latex', 'FontSize', 20);
+        subplot(3,1,2)
+        plot(d_qd,'Color','[0,0,0]',LineWidth=3);
+        ylabel('$\dot{q}_d$ $[rad/s]$','fontsize',20, 'interpreter','latex')
+        grid on
+        xlim([0 length(t)+50]);
+        ax = gca;
+        ax.XTick = 0:100:length(t)+50;
+        ax.XTickLabel = {'0', '1', '2', '3', '4', '5', '6', '7', '8'};
+        set(gca, 'TickLabelInterpreter', 'latex', 'FontSize', 20);
+        set(gca, 'TickLabelInterpreter', 'latex');
+        subplot(3,1,3)
+        plot(dd_qd,'Color','[0,0,0]',LineWidth=3);
+        ylabel('$\ddot{q}_d$ $[rad/s^2]$','fontsize',20, 'interpreter','latex')
+        grid on
+        xlim([0 length(t)+50]);
+        ax = gca;
+        ax.XTick = 0:100:length(t)+50;
+        xlabel('$t$ $[s]$','fontsize',20,'interpreter','latex')
+        ax.XTickLabel = {'0', '1', '2', '3', '4', '5', '6', '7', '8'};
+        set(gca, 'TickLabelInterpreter', 'latex', 'FontSize', 20);
+        set(gca, 'TickLabelInterpreter', 'latex');
+    end
 end
