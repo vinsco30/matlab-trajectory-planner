@@ -1,6 +1,6 @@
 function [Td, d_Td, varargout] = task_space_traj(ti, tf, Ti, Tf)
 
-    
+    format long
     pi = Ti(1:3,4);
     pf = Tf(1:3,4);
 
@@ -19,9 +19,14 @@ function [Td, d_Td, varargout] = task_space_traj(ti, tf, Ti, Tf)
     d_pd = zeros(3,length(s));
     dd_pd = zeros(3,length(s));
 
-    th = zeros(1,length(s));
-    d_th = zeros(1,length(s));
-    dd_th = zeros(1,length(s));
+    % th = zeros(1,length(s));
+    % d_th = zeros(1,length(s));
+    % dd_th = zeros(1,length(s));
+
+    Re = zeros(3,3,length(s));
+    d_Re = zeros(3,3,length(s));
+    we = zeros(3,length(s));
+    d_we = zeros(3,length(s));
     
     Td = zeros(4,4,length(s));
     d_Td = zeros(4,4,length(s));
@@ -34,16 +39,28 @@ function [Td, d_Td, varargout] = task_space_traj(ti, tf, Ti, Tf)
         dd_pd(:,i) = dd_s(i)*(pf-pi);
 
         %Angular path
-        th(i) = s(i)*th_f;
-        d_th(i) = d_s(i)*th_f;
-        dd_th(i) = dd_s(i)*th_f;
-
+        th = s(i)*th_f;
+        d_th = d_s(i)*th_f;
+        dd_th = dd_s(i)*th_f;
         
+        % Angular velocity and acceleration of the "middle frame" R^i
+        wi = d_th*r;
+        d_wi = dd_th*r;
 
-        Td(:,:,i) = [eye(3), pd(:,i); 0 0 0 1];
-        d_Td(:,:,i) = [eye(3), d_pd(:,i); 0 0 0 1];
+        % Angular path
+        Re(:,:,i) = Ri*axang2rotm([r; th]');
+        we(:,i) = Ri*wi;
+        d_we(:,i) = Ri*d_wi;
+        % Te_dot and Te
+        d_Re(:,:,i) = skew_symmetric(we(:,i))*Re(:,:,i);
+
+
+        Td(:,:,i) = [Re(:,:,i), pd(:,i); 0 0 0 1];
+        d_Td(:,:,i) = [d_Re(:,:,i), d_pd(:,i); 0 0 0 1];
     
     end
     varargout{1} = dd_pd;
+    varargout{2} = we;
+    varargout{3} = d_we;
 
 end
