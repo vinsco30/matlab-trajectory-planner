@@ -1,3 +1,12 @@
+%% Script for Circular Trajectory
+% With this script is possible to generate a trajectory for an end-effector
+% manipulator which starts from a home position p0, and then make a circumference
+% passing through three points (c1, c2, c3) then it goes back to home
+% position p5=p0. The trajectory has a change in orientation around x while
+% approaching the circle (pi/6), the orientation is changed from 
+% pi/6 -> 0 during the circumference. To change the dimension or the
+% shape of the figure, modify the values of the waypoints
+
 clear
 close all
 
@@ -10,9 +19,9 @@ p4 = [0.5 0.5 -1]';
 p5 = [0 0 0]';
 % Orientation waypoints definition
 R0 = eye(3);
-R1 = eye(3);
+R1 = rotx(pi/6);
 R2 = eye(3);
-R3 = rotx(pi/6);
+R3 = eye(3);
 R4 = eye(3);
 R5 = eye(3);
 
@@ -55,9 +64,11 @@ vz = squeeze(d_T_tot(3,4,:));
 
 Rf = T_tot(1:3,1:3,:);
 eul = zeros(3,n+50);
+quat = zeros(4,n+50);
 
 for i=1:n
     eul(:,i) = rotm2eul(Rf(:,:,i));
+    quat(:,i) = rotm2quat(Rf(:,:,i));
 end
 
 %% Plot
@@ -113,12 +124,16 @@ legend({'$a_x$', '$a_y$', '$a_z$'}, 'NumColumns',3,'FontSize',15,'FontWeight','n
 figure('Units', 'inches', 'Position', [0, 0, 7, 5]);
 subplot(3,1,1)
 plot(eul(3,:),'Color','[0.7,0.7,0.7]',LineWidth=3);
+% plot(quat(1,:),'Color','[0.7,0.7,0.7]',LineWidth=3);
 title('Task Space Orientation','fontsize',20, 'interpreter','latex')
-ylabel('$\phi_d$ $[m]$','fontsize',20, 'interpreter','latex')
+ylabel('$\phi_d$ $[rad]$','fontsize',20, 'interpreter','latex')
 grid on
 hold on
 plot(eul(2,:),'--','Color','[0.7,0.7,0.7]',LineWidth=3);
 plot(eul(1,:),'Color','[0.0,0.0,0.0]',LineWidth=3);
+% plot(quat(2,:),'--','Color','[0.7,0.7,0.7]',LineWidth=3);
+% plot(quat(3,:),'.-','Color','[0.7,0.7,0.7]',LineWidth=3);
+% plot(quat(4,:),'Color','[0.0,0.0,0.0]',LineWidth=3);
 xlim([0 n+50]);
 ax = gca;
 ax.XTick = 0:500:n+50;

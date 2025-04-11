@@ -1,4 +1,19 @@
 function [Td, d_Td, varargout] = task_space_traj(ti, tf, Ti, Tf)
+    % Inputs:
+    % ti - Trajectory starting time (scalar)
+    % tf - Trajecotry final time (scalar)
+    % Ti - Transformation matrix of the initial pose 
+    % Tf - Transformation matrix of the final ee pose
+    %
+    % Outputs:
+    % Td - vector of transformation matrices through the whole trajectory
+    % d_Td = Time derivative of the previous vector
+    % - varargout{1} = The vector of linear accelerations through the whole
+    %                  trajectory
+    % - varargout{2} = The vector of angular velocities
+    % - varargout{3} = The vector of angular accelerations through the whole
+    %                  trajectory
+
 
     format long
     pi = Ti(1:3,4);

@@ -1,5 +1,19 @@
 function [Td, d_Td, varargout] = task_space_circular(ti, tf, T1, T2, T3)
-
+    % Inputs:
+    % ti - Trajectory starting time (scalar)
+    % tf - Trajecotry final time (scalar)
+    % T1 - Transformation matrix of first point for the circumference 
+    % T2 - Transformation matrix of second point for the circumference
+    % T3 - Transformation matrix of third point for the circumference
+    %
+    % Outputs:
+    % Td - vector of transformation matrices through the whole trajectory
+    % d_Td = Time derivative of the previous vector
+    % - varargout{1} = The vector of linear accelerations through the whole
+    %                  trajectory
+    % - varargout{2} = The vector of angular velocities
+    % - varargout{3} = The vector of angular accelerations through the whole
+    %                  trajectory
     p1 = T1(1:3,4); %Point 1 of the circle
     p2 = T2(1:3,4); %Point 2 of the circle
     p3 = T3(1:3,4); %Point 3 of the circle
@@ -29,6 +43,7 @@ function [Td, d_Td, varargout] = task_space_circular(ti, tf, T1, T2, T3)
     ph = atan2(p1(2)-C(2),p1(1)-C(1));
 
     [s, d_s, dd_s] = compute_quintic(ti, tf, [0,0,0]', [2*pi,0,0]', false);
+    [s_or, d_s_or, dd_s_or] = compute_quintic(ti, tf, [0,0,0]', [1,0,0]', false);
 
     pd = zeros(3,length(s));
     d_pd = zeros(3,length(s));
@@ -55,9 +70,9 @@ function [Td, d_Td, varargout] = task_space_circular(ti, tf, T1, T2, T3)
                        0];
 
         %Angular path
-        th = s(i)*th_f;
-        d_th = d_s(i)*th_f;
-        dd_th = dd_s(i)*th_f;
+        th = s_or(i)*th_f;
+        d_th = d_s_or(i)*th_f;
+        dd_th = dd_s_or(i)*th_f;
 
         % Angular velocity and acceleration of the "middle frame" R^i
         wi = d_th*r;
