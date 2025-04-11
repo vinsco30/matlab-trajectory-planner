@@ -118,7 +118,7 @@ ylabel('$\ddot{p}_d$ $[m/s^2]$','fontsize',20, 'interpreter','latex')
 grid on
 hold on
 plot(dd_p(2,:),'--','Color','[0.7,0.7,0.7]',LineWidth=3);
-plot(dd_p(3,:),'Color','[0.0,0.0,0.0]',LineWidthor=3);
+plot(dd_p(3,:),'Color','[0.0,0.0,0.0]',LineWidth=3);
 xlim([0 n+50]);
 ax = gca;
 ax.XTick = 0:100:n+50;
@@ -184,5 +184,5 @@ grid on
 xlabel('$x$ $[m]$','fontsize',20,'interpreter','latex')
 ylabel('$y$ $[m]$','fontsize',20, 'interpreter','latex')
 zlabel('$z$ $[m]$','fontsize',20, 'interpreter','latex')
-
+% print('plot_ieee_xyz_square', '-dpdf', '-r300');
 

@@ -16,6 +16,7 @@ function [Td, d_Td, varargout] = task_space_traj(ti, tf, Ti, Tf)
 
 
     format long
+    %Computation of the initial quantities
     pi = Ti(1:3,4);
     pf = Tf(1:3,4);
 
@@ -28,7 +29,8 @@ function [Td, d_Td, varargout] = task_space_traj(ti, tf, Ti, Tf)
     r(4) = [];
 
 
-    [s, d_s, dd_s] = compute_quintic(ti, tf, [0,0,0]', [1,0,0]', false);
+    [s, d_s, dd_s] = compute_quintic(ti, tf, [0,0,0]', [norm(pf-pi,2),0,0]', false);
+    [th, d_th, dd_th] = compute_quintic(ti,tf,[0,0,0]', [th_f, 0, 0]', false);
 
     pd = zeros(3,length(s));
     d_pd = zeros(3,length(s));
@@ -49,26 +51,20 @@ function [Td, d_Td, varargout] = task_space_traj(ti, tf, Ti, Tf)
     for i=1:length(s) 
         
         %Rectilinear path
-        pd(:,i) = pi + (s(i))*(pf-pi);
-        d_pd(:,i) = d_s(i)*(pf-pi);
-        dd_pd(:,i) = dd_s(i)*(pf-pi);
-
-        %Angular path
-        th = s(i)*th_f;
-        d_th = d_s(i)*th_f;
-        dd_th = dd_s(i)*th_f;
+        pd(:,i) = pi + (s(i))/norm(pf-pi,2)*(pf-pi);
+        d_pd(:,i) = d_s(i)/norm(pf-pi,2)*(pf-pi);
+        dd_pd(:,i) = dd_s(i)/norm(pf-pi,2)*(pf-pi);
         
         % Angular velocity and acceleration of the "middle frame" R^i
-        wi = d_th*r;
-        d_wi = dd_th*r;
+        wi = d_th(i)*r;
+        d_wi = dd_th(i)*r;
 
         % Angular path
-        Re(:,:,i) = Ri*axang2rotm([r; th]');
+        Re(:,:,i) = Ri*axang2rotm([r; th(i)]');
         we(:,i) = Ri*wi;
         d_we(:,i) = Ri*d_wi;
         % Te_dot and Te
         d_Re(:,:,i) = skew_symmetric(we(:,i))*Re(:,:,i);
-
 
         Td(:,:,i) = [Re(:,:,i), pd(:,i); 0 0 0 1];
         d_Td(:,:,i) = [d_Re(:,:,i), d_pd(:,i); 0 0 0 1];

@@ -42,8 +42,8 @@ function [Td, d_Td, varargout] = task_space_circular(ti, tf, T1, T2, T3)
     ro = sqrt(k(1)^2/4 + k(2)^2/4 - k(3));
     ph = atan2(p1(2)-C(2),p1(1)-C(1));
 
-    [s, d_s, dd_s] = compute_quintic(ti, tf, [0,0,0]', [2*pi,0,0]', false);
-    [s_or, d_s_or, dd_s_or] = compute_quintic(ti, tf, [0,0,0]', [1,0,0]', false);
+    [s, d_s, dd_s] = compute_quintic(ti, tf, [0,0,0]', [2*pi*ro,0,0]', false);
+    [th, d_th, dd_th] = compute_quintic(ti, tf, [0,0,0]', [th_f,0,0]', false);
 
     pd = zeros(3,length(s));
     d_pd = zeros(3,length(s));
@@ -69,17 +69,12 @@ function [Td, d_Td, varargout] = task_space_circular(ti, tf, T1, T2, T3)
                        (-d_s(i)^2*sin(s(i)/ro))/ro + dd_s(i)*cos(s(i)/ro);
                        0];
 
-        %Angular path
-        th = s_or(i)*th_f;
-        d_th = d_s_or(i)*th_f;
-        dd_th = dd_s_or(i)*th_f;
-
         % Angular velocity and acceleration of the "middle frame" R^i
-        wi = d_th*r;
-        d_wi = dd_th*r;
+        wi = d_th(i)*r;
+        d_wi = dd_th(i)*r;
 
         % Angular path
-        Re(:,:,i) = Ri*axang2rotm([r; th]');
+        Re(:,:,i) = Ri*axang2rotm([r; th(i)]');
         we(:,i) = Ri*wi;
         d_we(:,i) = Ri*d_wi;
         % Te_dot and Te
